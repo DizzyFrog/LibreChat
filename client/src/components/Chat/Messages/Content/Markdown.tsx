@@ -17,9 +17,11 @@ import {
 import { Artifact, artifactPlugin } from '~/components/Artifacts/Artifact';
 import { ArtifactProvider, CodeBlockProvider } from '~/Providers';
 import MarkdownErrorBoundary from './MarkdownErrorBoundary';
+import rehypeMathCopyable from '~/utils/rehypeMathCopyable';
 import { langSubset, preprocessLaTeX } from '~/utils';
 import { unicodeCitation } from '~/components/Web';
 import { code, a, p, img } from './MarkdownComponents';
+import MathCopyable from './MathCopyable';
 import store from '~/store';
 
 type TContentProps = {
@@ -41,6 +43,7 @@ const Markdown = memo(function Markdown({ content = '', isLatestMessage }: TCont
   const rehypePlugins = useMemo(
     () => [
       [rehypeKatex],
+      [rehypeMathCopyable],
       [
         rehypeHighlight,
         {
@@ -94,6 +97,7 @@ const Markdown = memo(function Markdown({ content = '', isLatestMessage }: TCont
                 'composite-citation': CompositeCitation,
                 'mcp-ui-resource': MCPUIResource,
                 'mcp-ui-carousel': MCPUIResourceCarousel,
+                'math-copyable': MathCopyable,
               } as {
                 [nodeType: string]: React.ElementType;
               }

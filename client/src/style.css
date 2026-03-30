@@ -2849,6 +2849,76 @@ html {
   max-height: none !important;
 }
 
+/** Click-to-copy LaTeX: MathCopyable component styles */
+.math-copyable {
+  position: relative;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/** Block math: constrain to formula width and center it */
+.math-copyable--block {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 30px 20px 10px 20px;
+}
+
+.math-copyable--inline {
+  display: inline-block;
+  padding: 2px 5px;
+  vertical-align: middle;
+}
+
+.math-copyable:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 0 1.5px rgba(200, 200, 220, 0.2);
+}
+
+/** Button inside the card at the top (block), or floating above (inline) */
+.math-copyable--block .math-copy-btn {
+  top: 6px;
+}
+
+.math-copyable--inline .math-copy-btn {
+  top: -26px;
+}
+
+.math-copy-btn {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(200, 200, 220, 0.22);
+  background: rgba(35, 35, 50, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(220, 220, 235, 0.9);
+  font-size: 12px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.math-copyable:hover .math-copy-btn {
+  opacity: 1;
+}
+
+.math-copy-btn--copied {
+  opacity: 1 !important;
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.35);
+  background: rgba(15, 35, 25, 0.92);
+}
+
 /** AnimatedSearchInput style */
 
 @keyframes gradient-x {
