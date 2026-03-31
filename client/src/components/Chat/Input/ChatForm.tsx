@@ -22,6 +22,7 @@ import {
   useFocusChatEffect,
 } from '~/hooks';
 import { mainTextareaId, BadgeItem } from '~/common';
+import OptionPicker from '~/components/Chat/Messages/Content/OptionPicker';
 import AttachFileChat from './Files/AttachFileChat';
 import FileFormChat from './Files/FileFormChat';
 import { cn, removeFocusRings } from '~/utils';
@@ -83,6 +84,7 @@ const ChatForm = memo(function ChatForm({
   const [badges, setBadges] = useRecoilState(store.chatBadges);
   const [isEditingBadges, setIsEditingBadges] = useRecoilState(store.isEditingBadges);
   const [showStopButton, setShowStopButton] = useRecoilState(store.showStopButtonByIndex(index));
+  const [pendingOptions, setPendingOptions] = useRecoilState(store.pendingOptionsFamily(index));
   const [showPlusPopover, setShowPlusPopover] = useRecoilState(store.showPlusPopoverFamily(index));
   const [showMentionPopover, setShowMentionPopover] = useRecoilState(
     store.showMentionPopoverFamily(index),
@@ -227,6 +229,13 @@ const ChatForm = memo(function ChatForm({
   );
 
   return (
+    <>
+      {pendingOptions && (
+        <OptionPicker
+          options={pendingOptions.options}
+          onDismiss={() => setPendingOptions(null)}
+        />
+      )}
     <form
       onSubmit={methods.handleSubmit(submitMessage)}
       className={cn(
@@ -391,6 +400,7 @@ const ChatForm = memo(function ChatForm({
         </div>
       </div>
     </form>
+    </>
   );
 });
 ChatForm.displayName = 'ChatForm';

@@ -1,4 +1,4 @@
-import { atom, selectorFamily } from 'recoil';
+import { atom, atomFamily, selectorFamily } from 'recoil';
 import { TAttachment } from 'librechat-data-provider';
 import { atomWithLocalStorage } from './utils';
 import { BadgeItem } from '~/common';
@@ -64,6 +64,13 @@ const chatBadges = atomWithLocalStorage<Pick<BadgeItem, 'id'>[]>('chatBadges', [
   // { id: '2' },
 ]);
 
+type PendingOptions = { options: string[] } | null;
+
+const pendingOptionsFamily = atomFamily<PendingOptions, number>({
+  key: 'pendingOptionsByIndex',
+  default: null,
+});
+
 export default {
   hideBannerHint,
   messageAttachmentsMap,
@@ -71,4 +78,5 @@ export default {
   queriesEnabled,
   isEditingBadges,
   chatBadges,
+  pendingOptionsFamily,
 };

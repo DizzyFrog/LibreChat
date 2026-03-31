@@ -1,12 +1,14 @@
 import React, { memo, useMemo, useRef, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useToastContext } from '@librechat/client';
 import { PermissionTypes, Permissions, apiBaseUrl } from 'librechat-data-provider';
 import Mermaid, { MermaidErrorBoundary } from '~/components/Messages/Content/Mermaid';
+import { parseOptionsBlock } from './OptionPicker';
 import CodeBlock from '~/components/Messages/Content/CodeBlock';
 import useHasAccess from '~/hooks/Roles/useHasAccess';
 import { useFileDownload } from '~/data-provider';
-import { useCodeBlockContext } from '~/Providers';
+import { useCodeBlockContext, useMessageContext } from '~/Providers';
+import { useChatContext } from '~/Providers';
 import { handleDoubleClick } from '~/utils';
 import { useLocalize } from '~/hooks';
 import store from '~/store';
@@ -15,6 +17,27 @@ type TCodeProps = {
   inline?: boolean;
   className?: string;
   children: React.ReactNode;
+};
+
+const OptionsBlockInner = ({ content }: { content: string }) => {
+  const { isLatestMessage = false, isSubmitting = false } = useMessageContext();
+  const { index } = useChatContext();
+  const setPendingOptions = useSetRecoilState(store.pendingOptionsFamily(index));
+  const options = useMemo(() => parseOptionsBlock(content), [content]);
+  const shouldShow = isLatestMessage && !isSubmitting && options.length >= 2;
+
+  useEffect(() => {
+    if (shouldShow) {
+      setPendingOptions({ options });
+    }
+    return () => {
+      if (shouldShow) {
+        setPendingOptions(null);
+      }
+    };
+  }, [shouldShow, options, setPendingOptions]);
+
+  return null;
 };
 
 export const code: React.ElementType = memo(function MarkdownCode({
@@ -29,10 +52,11 @@ export const code: React.ElementType = memo(function MarkdownCode({
   const lang = match && match[1];
   const isMath = lang === 'math';
   const isMermaid = lang === 'mermaid';
+  const isOptions = lang === 'options';
   const isSingleLine = typeof children === 'string' && children.split('\n').length === 1;
 
   const { getNextIndex, resetCounter } = useCodeBlockContext();
-  const blockIndex = useRef(getNextIndex(isMath || isMermaid || isSingleLine)).current;
+  const blockIndex = useRef(getNextIndex(isMath || isMermaid || isSingleLine || isOptions)).current;
 
   useEffect(() => {
     resetCounter();
@@ -47,6 +71,9 @@ export const code: React.ElementType = memo(function MarkdownCode({
         <Mermaid id={`mermaid-${blockIndex}`}>{content}</Mermaid>
       </MermaidErrorBoundary>
     );
+  } else if (isOptions) {
+    const content = typeof children === 'string' ? children : String(children ?? '');
+    return <OptionsBlockInner content={content} />;
   } else if (isSingleLine) {
     return (
       <code onDoubleClick={handleDoubleClick} className={className}>
