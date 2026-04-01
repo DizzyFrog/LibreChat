@@ -1,5 +1,10 @@
 # LibreChat
 
+## Product Planning
+
+- MVP planning for the postgraduate math tutoring product lives in `MVP/plan.md`.
+- When implementing this product direction, use `MVP/plan.md` as the primary reference for scope, domain modeling, routing, Agent roles, and phased delivery.
+
 ## Project Overview
 
 LibreChat is a monorepo with the following key workspaces:
